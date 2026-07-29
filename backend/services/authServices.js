@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel.js");
 const generateOTP = require("../utils/generateOTP.js");
+const generateUniqueUserId = require("../utils/generateIdNumber.js");
 const client = require("../config/redis.js");
 const sendOtp = require("../utils/otpSendToMail.js");
 const generateAccessToken = require("../utils/generateAccessToken.js");
@@ -68,8 +69,12 @@ const verifyOtp = async (email, otp) => {
     throw new Error("User already exists.");
   }
 
+  //generate unique userId
+  const userId = generateUniqueUserId();
+
   // Create new user
   const newUser = new User({
+    userId,
     userName,
     email: storedEmail,
     password,

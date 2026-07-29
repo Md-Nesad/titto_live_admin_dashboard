@@ -3,15 +3,16 @@ const cors = require("cors");
 const helmet = require("helmet");
 const notFoundMiddleware = require("./middlewares/notFoundMiddleware");
 const errorHandalingMiddleware = require("./middlewares/errorHandalingMiddleware");
-const authRoutes = require("./routes/authRoutes");
 const authMiddleware = require("./middlewares/authMiddleware");
 const adminMiddleware = require("./middlewares/adminMiddleware");
 const corsOptions = require("./utils/corsOptions");
+const authRoutes = require("./routes/authRoutes");
 const settingRoutes = require("./routes/settingRoute");
 const supportAgencyRoutes = require("./routes/supportAgencyRoutes");
 const countryRoutes = require("./routes/countryRoutes");
 const salaryRoutes = require("./routes/salaryRoutes");
 const giftRoutes = require("./routes/giftRoute");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -45,6 +46,9 @@ app.use("/api/v1/salary", salaryRoutes);
 
 // gift routes
 app.use("/api/v1/gift", giftRoutes);
+
+// user routes
+app.use("/api/v1/users", userRoutes);
 
 //not found middleware
 app.use(notFoundMiddleware);
