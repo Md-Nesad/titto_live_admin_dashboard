@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #ff4b00;
+  --color-secondary: #ff9080;
+  --color-border_primary: #e4e4e4;
+}
+
+@layer base {
+  h1 {
+    @apply text-xl font-semibold;
+  }
+}
+
+th {
+  font-weight: 600;
+  color: #535353;
+}
+
+button {
+  cursor: pointer;
+}
+
+.active-tab {
+  @apply px-6 py-1 rounded-sm text-white font-semibold border-none outline-none bg-primary drop-shadow-sm;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.8);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.animatefadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.hide_scrollbar::-webkit-scrollbar {
+  display: none;
+}
