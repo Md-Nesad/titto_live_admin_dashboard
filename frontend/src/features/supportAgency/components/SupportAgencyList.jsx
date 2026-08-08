@@ -1,8 +1,14 @@
-import { Ellipsis, Funnel } from "lucide-react";
+import { Ellipsis, Funnel, SquarePen, Trash2 } from "lucide-react";
 import star from "../../../assets/image 343.svg";
 import { tableData } from "../../../data/data";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import FilterByStatusDropdown from "../../../shared/components/FilterByStatus";
 
 export default function SupportAgencyList() {
+  const navigate = useNavigate();
+  const [openFilter, setOpenFilter] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("all");
   return (
     <div className="w-full mb-10">
       {/* search area */}
@@ -13,10 +19,31 @@ export default function SupportAgencyList() {
           placeholder="Search by agency ID or name"
         />
         <div className="flex items-center sm:gap-3 gap-2">
-          <button className="sm:px-5 px-2 py-2 rounded-md bg-[#FFFFFF] border border-[#FF9080] font-medium flex items-center max-sm:justify-center sm:gap-2 gap-4 text-sm sm:text-md text-[#FF9080] max-sm:w-full">
-            <Funnel size={18} className="text-[#FF9080]" /> Filter
-          </button>
-          <button className="sm:px-5 px-2 py-2 w-30 rounded-md bg-[#FF9080] text-white font-medium text-sm sm:text-md max-sm:w-full">
+          <div className="relative">
+            <button
+              onClick={() => setOpenFilter((prev) => !prev)}
+              className="px-3 sm:px-4 py-1.5 rounded-md bg-white border border-[#CCCCCC] font-medium flex items-center gap-2"
+            >
+              <Funnel size={18} /> Filter
+            </button>
+
+            {/* Filter Dropdown */}
+            {openFilter && (
+              <div className="absolute left-1 top-full mt-2 z-50">
+                <FilterByStatusDropdown
+                  statusFilter={statusFilter}
+                  setStatusFilter={setStatusFilter}
+                  onClose={() => setOpenFilter(false)}
+                />
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() =>
+              navigate("/dashboard/support-agency/add-support-agency")
+            }
+            className="sm:px-5 px-2 py-2 w-30 rounded-md bg-[#FF9080] text-white font-medium text-sm sm:text-md max-sm:w-full"
+          >
             Add Agency
           </button>
         </div>
@@ -68,8 +95,18 @@ export default function SupportAgencyList() {
                     </span>
                   </td>
                   <td className="p-3 text-[#181717] text-sm font-medium cursor-pointer flex gap-5 items-center">
-                    <button>Edit</button>
-                    <button>Delete</button>
+                    <button
+                      onClick={() =>
+                        navigate(
+                          `/dashboard/support-agency/update-support-agency/${row.id}`,
+                        )
+                      }
+                    >
+                      <SquarePen size={17} />
+                    </button>
+                    <button>
+                      <Trash2 size={18} className="text-red-500" />
+                    </button>
                   </td>
                 </tr>
               ))}

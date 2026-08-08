@@ -1,6 +1,9 @@
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import RateTransactionTable from "./RateTransactionTable";
-import ExchangeRatetTable from "./ExchangeRatetTable";
+import ExchangeRatetTable from "./CurrentExchangeRate";
+import CurrentExchangeRate from "./CurrentExchangeRate";
+import UpdateExchangeRate from "./UpdateExchangeRate";
+import SellCoins from "./SellCoinsToAgencies";
 
 export default function CoinManagementTabs() {
   return (
@@ -13,21 +16,15 @@ export default function CoinManagementTabs() {
               Rate Transaction
             </Tab>
             <Tab className="cursor-pointer" selectedClassName="active-tab">
+              Sell Coins
+            </Tab>
+            <Tab className="cursor-pointer" selectedClassName="active-tab">
               Exchange Ratet
             </Tab>
-          </TabList>
-
-          <div className="flex items-center gap-3 sm:gap-4 text-nowrap max-sm:w-full overflow-x-auto hide_scrollbar">
-            <button className="px-4 py-1.5 rounded-md border border-secondary text-secondary font-medium text-md bg-white">
-              Refund Coin
-            </button>
-            <button className="px-4 py-1.5 rounded-md border border-secondary text-secondary font-medium text-md bg-white">
-              Manual Adjustment
-            </button>
-            <button className="px-4 py-1.5 rounded-md border border-secondary text-white text-md font-medium bg-secondary">
+            <Tab className="cursor-pointer" selectedClassName="active-tab">
               $ Update Rate
-            </button>
-          </div>
+            </Tab>
+          </TabList>
         </div>
 
         <TabPanel>
@@ -35,7 +32,15 @@ export default function CoinManagementTabs() {
         </TabPanel>
 
         <TabPanel>
-          <ExchangeRatetTable />
+          <SellCoins />
+        </TabPanel>
+
+        <TabPanel>
+          <CurrentExchangeRate />
+        </TabPanel>
+
+        <TabPanel>
+          <UpdateExchangeRate />
         </TabPanel>
       </Tabs>
     </div>

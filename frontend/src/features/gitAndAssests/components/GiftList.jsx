@@ -1,7 +1,22 @@
 import { Check, Eye, Funnel, X } from "lucide-react";
 import { tableData } from "../../../data/data";
+import { useState } from "react";
+import FilterByStatusDropdown from "../../../shared/components/FilterByStatus";
+import useViewModal from "../../../shared/hooks/useViewModal";
+import AddGiftModal from "../modals/AddGiftModal";
+import UpdateGiftModal from "../modals/UpdateGiftModal";
 
 export default function GiftListTable() {
+  const [openFilter, setOpenFilter] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [isOpen, setIsOpen] = useState(false);
+  const {
+    open: edit,
+    selectedItem,
+    handleViewClick,
+    handleClose,
+  } = useViewModal();
+
   return (
     <div className="w-full mb-10">
       {/* search area */}
@@ -12,8 +27,30 @@ export default function GiftListTable() {
           placeholder="Search by agency ID or name"
         />
         <div className="flex items-center sm:gap-3 gap-2">
-          <button className="sm:px-5 px-2 py-2 rounded-md bg-[#FFFFFF] border border-[#FF9080] font-medium flex items-center max-sm:justify-center sm:gap-2 gap-4 text-sm sm:text-md text-[#FF9080] max-sm:w-full">
-            <Funnel size={18} className="text-[#FF9080]" /> Filter
+          <div className="relative">
+            <button
+              onClick={() => setOpenFilter((prev) => !prev)}
+              className="px-3 sm:px-4 py-1.5 rounded-md bg-white border border-[#CCCCCC] font-medium flex items-center gap-2"
+            >
+              <Funnel size={18} /> Filter
+            </button>
+
+            {/* Filter Dropdown */}
+            {openFilter && (
+              <div className="absolute left-1 top-full mt-2 z-50">
+                <FilterByStatusDropdown
+                  statusFilter={statusFilter}
+                  setStatusFilter={setStatusFilter}
+                  onClose={() => setOpenFilter(false)}
+                />
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="sm:px-5 px-2 py-2 w-30 rounded-md bg-[#FF9080] text-white font-medium text-sm sm:text-md max-sm:w-full"
+          >
+            + Add Gift
           </button>
         </div>
       </div>
@@ -63,7 +100,7 @@ export default function GiftListTable() {
                     </span>
                   </td>
                   <td className="p-3 text-[#181717] text-sm font-medium cursor-pointer flex gap-5 items-center">
-                    <button className="font-semibold">Edit</button>
+                    <button onClick={() => handleViewClick(row)}>Edit</button>
                     <button className="font-semibold bg-[#FFE9E9] text-[#CF0D13] py-1 px-3 rounded">
                       Delete
                     </button>
@@ -72,6 +109,10 @@ export default function GiftListTable() {
               ))}
             </tbody>
           </table>
+          {isOpen && (
+            <AddGiftModal open={isOpen} onClose={() => setIsOpen(false)} />
+          )}
+          {edit && <UpdateGiftModal open={edit} onClose={handleClose} />}
         </div>
       </div>
     </div>

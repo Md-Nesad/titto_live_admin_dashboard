@@ -1,9 +1,20 @@
 import { Ellipsis, Funnel } from "lucide-react";
-
 import star from "../../../assets/image 343.svg";
 import { tableData } from "../../../data/data";
+import FilterByStatusDropdown from "../../../shared/components/FilterByStatus";
+import FilterAndAddAgency from "../../agencies/components/FilterAndAddAgency";
+import AgencyDetailsModal from "../../agencies/modals/AgencyDetailsModal";
+import { useState } from "react";
+import useViewModal from "../../../shared/hooks/useViewModal";
 
 export default function DashboardTable() {
+  const {
+    open,
+    selectedItem: agency,
+    handleViewClick,
+    handleClose,
+  } = useViewModal();
+
   return (
     <div className="w-full mb-10">
       {/* search area */}
@@ -13,14 +24,7 @@ export default function DashboardTable() {
           className="border border-[#BBBBBB] outline-[#BBBBBB] w-full px-4 py-1.5 rounded-md shrink"
           placeholder="Search by agency ID or name"
         />
-        <div className="flex items-center sm:gap-3 gap-2">
-          <button className="sm:px-5 px-2 py-2 rounded-md bg-[#FFFFFF] border border-[#FF9080] font-medium flex items-center max-sm:justify-center sm:gap-2 gap-4 text-sm sm:text-md text-[#FF9080] max-sm:w-full">
-            <Funnel size={18} className="text-[#FF9080]" /> Filter
-          </button>
-          <button className="sm:px-5 px-2 py-2 w-30 rounded-md bg-[#FF9080] text-white font-medium text-sm sm:text-md max-sm:w-full">
-            Add Agency
-          </button>
-        </div>
+        <FilterAndAddAgency />
       </div>
 
       {/* Table Area */}
@@ -44,39 +48,48 @@ export default function DashboardTable() {
             </thead>
 
             <tbody>
-              {tableData.map((row, index) => (
+              {tableData.map((agency, index) => (
                 <tr
                   key={index}
                   className="border-t border-[#DFDFDF] hover:bg-gray-50 text-md"
                 >
-                  <td className="p-3 font-medium pl-5">{row.id}</td>
-                  <td className="p-3">{row.name}</td>
+                  <td className="p-3 font-medium pl-5">{agency.id}</td>
+                  <td className="p-3">{agency.name}</td>
                   <td className="p-3">Host</td>
                   <td className="p-3">
-                    {row.level && (
+                    {agency.level && (
                       <span className="p-1 text-xs bg-linear-to-b from-[#DCE0ED] to-[#705996] rounded-lg font-semibold text-white flex items-center gap-2 w-13">
                         <img src={star} alt="" className="w-4 h-4" />{" "}
-                        {row.level}
+                        {agency.level}
                       </span>
                     )}
                   </td>
 
-                  {/* <td className="p-3">{row.beans}</td> */}
-                  <td className="xl:p-3 px-7">{row.coinSell}</td>
-                  <td className="xl:p-3 px-7">{row.coinBuy}</td>
-                  <td className="p-3">{row.location}</td>
+                  {/* <td className="p-3">{agency.beans}</td> */}
+                  <td className="xl:p-3 px-7">{agency.coinSell}</td>
+                  <td className="xl:p-3 px-7">{agency.coinBuy}</td>
+                  <td className="p-3">{agency.location}</td>
                   <td className="p-3">
                     <span className="px-4 py-1 text-xs bg-linear-to-r from-[#79D49B] to-[#25C962] text-[#005D23] rounded-full font-semibold">
-                      {row.status}
+                      {agency.status}
                     </span>
                   </td>
                   <td className="p-3 text-[#181717] text-sm font-medium cursor-pointer flex gap-5 items-center">
-                    View
+                    <button onClick={() => handleViewClick(agency)}>
+                      View
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          {open && (
+            <AgencyDetailsModal
+              open={open}
+              onClose={handleClose}
+              agency={agency}
+            />
+          )}
         </div>
       </div>
     </div>

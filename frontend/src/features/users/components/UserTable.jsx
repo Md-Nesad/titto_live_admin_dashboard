@@ -1,8 +1,18 @@
 import { Ellipsis, Eye, Funnel, Trash2 } from "lucide-react";
 import star from "../../../assets/image 343.svg";
 import { tableData } from "../../../data/data";
+import { useState } from "react";
+import UserDetailsModal from "../modals/userDetailsModal";
+import useViewModal from "../../../shared/hooks/useViewModal";
 
 export default function UserTable() {
+  const {
+    open,
+    selectedItem: user,
+    handleViewClick,
+    handleClose,
+  } = useViewModal();
+
   return (
     <div className="w-full mb-10">
       {/* search area */}
@@ -12,14 +22,14 @@ export default function UserTable() {
           className="border border-[#BBBBBB] outline-[#BBBBBB] w-full px-4 py-1.5 rounded-md shrink"
           placeholder="Search by agency ID or name"
         />
-        <div className="flex items-center sm:gap-3 gap-2">
+        {/* <div className="flex items-center sm:gap-3 gap-2">
           <button className="sm:px-5 px-2 py-2 rounded-md bg-[#FFFFFF] border border-[#FF9080] font-medium flex items-center max-sm:justify-center sm:gap-2 gap-4 text-sm sm:text-md text-[#FF9080] max-sm:w-full">
             <Funnel size={18} className="text-[#FF9080]" /> Filter
           </button>
           <button className="sm:px-5 px-2 py-2 w-30 rounded-md bg-[#FF9080] text-white font-medium text-sm sm:text-md max-sm:w-full">
             Add User
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Table Area */}
@@ -62,7 +72,10 @@ export default function UserTable() {
                     </span>
                   </td>
                   <td className="p-3 text-[#181717] text-sm font-medium cursor-pointer flex gap-5 items-center">
-                    <button title="View User">
+                    <button
+                      onClick={() => handleViewClick(row)}
+                      title="View User"
+                    >
                       <Eye size={20} />
                     </button>
 
@@ -74,6 +87,9 @@ export default function UserTable() {
               ))}
             </tbody>
           </table>
+          {open && (
+            <UserDetailsModal open={open} onClose={handleClose} user={user} />
+          )}
         </div>
       </div>
     </div>

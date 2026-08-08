@@ -4,6 +4,7 @@ import { Users, DollarSign, TrendingUp } from "lucide-react";
 import Commission from "../assets/Commission";
 import Average from "../assets/Average";
 import SalaryTargetList from "../features/salaryTarget/SalaryTargetList";
+import TitleSubTitle from "../shared/components/TitleSubTitle";
 
 export default function SalaryTarget() {
   const stats = [
@@ -38,6 +39,11 @@ export default function SalaryTarget() {
   ];
   return (
     <div>
+      <TitleSubTitle
+        title="Salary Target"
+        subtitle="Manage your salary target here"
+      />
+
       <StatsCards data={stats} />
 
       <SalaryTargetList />

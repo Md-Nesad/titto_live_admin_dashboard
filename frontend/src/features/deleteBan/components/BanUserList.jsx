@@ -1,26 +1,29 @@
-import { Funnel, Pen, Trash2 } from "lucide-react";
+import { Funnel, Eye, Trash2 } from "lucide-react";
 import { tableData } from "../../../data/data";
+import useViewModal from "../../../shared/hooks/useViewModal";
+import BanDetailsModal from "./BanDetails";
 
 export default function BanUserList() {
+  const { open, selectedItem, handleViewClick, handleClose } = useViewModal();
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 mb-4">
         {/* Search Input */}
         <input
           type="text"
-          className="border border-[#BBBBBB] outline-[#BBBBBB] w-full sm:max-w-[75%] px-4 py-1.5 rounded-md"
+          className="border border-[#BBBBBB] outline-[#BBBBBB] w-full px-4 py-1.5 rounded-md"
           placeholder="Search by ID or name"
         />
 
         {/* Buttons */}
-        <div className="flex items-center justify-end gap-2 sm:gap-3 w-full sm:w-auto">
+        {/* <div className="flex items-center justify-end gap-2 sm:gap-3 w-full sm:w-auto">
           <button className="px-3 sm:px-4 py-1.5 rounded-md bg-white border border-[#CCCCCC] font-medium flex items-center justify-center gap-2 text-sm sm:text-base w-full sm:w-auto">
             <Funnel size={18} /> Filter
           </button>
           <button className="px-3 sm:px-6 py-1.5 text-sm sm:text-base bg-linear-to-r from-[#6DA5FF] to-[#F576D6] text-white rounded-md font-medium w-full sm:w-auto text-nowrap">
             Add Agency
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* table area */}
@@ -71,8 +74,11 @@ export default function BanUserList() {
                   </td>
                   <td className="p-3 mt-1.5 text-[#181717] text-sm font-medium cursor-pointer flex gap-5 items-center">
                     <span className="flex items-center gap-3">
-                      <button title="Edit">
-                        <Pen size={19} />
+                      <button
+                        onClick={() => handleViewClick(user)}
+                        title="View Details"
+                      >
+                        <Eye size={19} />
                       </button>
                       <Trash2 size={18} className="text-[#FF0037]" />
                     </span>
@@ -88,9 +94,13 @@ export default function BanUserList() {
             )}
           </tbody>
         </table>
-        {/* {isOpen && (
-          <UserDetailsModal open={isOpen} onClose={() => setIsOpen(false)} />
-        )} */}
+        {open && (
+          <BanDetailsModal
+            open={open}
+            onClose={handleClose}
+            agency={selectedItem}
+          />
+        )}
       </div>
     </>
   );

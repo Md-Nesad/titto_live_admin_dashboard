@@ -15,6 +15,11 @@ import NotificationCenter from "../pages/NotificationCenter";
 import SupportAgency from "../pages/SupportAgency";
 import DeleteBan from "../pages/DeleteBan";
 import Settings from "../pages/Settings";
+import AddAgency from "../pages/AddAgency";
+import UpdateAgencyDetails from "../features/agencies/components/UpdateAgencyDetails";
+import UpdateSupportAgencyForm from "../features/supportAgency/components/UpdateSupportAgency";
+import AddSupportAgency from "../pages/AddSupportAgency";
+import AdminSetting from "../pages/AdminSetting";
 
 export default function AdminDashboardRoutes() {
   return (
@@ -29,6 +34,11 @@ export default function AdminDashboardRoutes() {
             <Route index element={<Dashboard />} />
             <Route path="users" element={<UsersList />} />
             <Route path="agencies" element={<Agencies />} />
+            <Route path="agencies/add-agency" element={<AddAgency />} />
+            <Route
+              path="agencies/update-agency/:agencyId"
+              element={<UpdateAgencyDetails />}
+            />
             <Route path="coin-management" element={<CoinManagement />} />
             <Route
               path="transaction-history"
@@ -42,8 +52,17 @@ export default function AdminDashboardRoutes() {
               element={<NotificationCenter />}
             /> */}
             <Route path="support-agency" element={<SupportAgency />} />
+            <Route
+              path="support-agency/add-support-agency"
+              element={<AddSupportAgency />}
+            />
+            <Route
+              path="support-agency/update-support-agency/:supportId"
+              element={<UpdateSupportAgencyForm />}
+            />
             <Route path="delete-ban" element={<DeleteBan />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="admin-settings" element={<AdminSetting />} />
           </Route>
 
           {/* <Route path="*" element={<NotFound />} /> */}

@@ -17,7 +17,7 @@ export const renderMenuItems = (items, isToogleNav) =>
       key={item.title}
       to={item.link}
       className={() =>
-        `flex items-center gap-3 px-3 py-3 rounded-md text-md font-medium 
+        `flex items-center gap-3 px-3 py-3.5 rounded-md text-md font-medium 
           transition-all cursor-pointer hover:bg-primary hover:text-white
           ${
             isMenuActive(item) ? "text-primary font-semibold" : "text-[#181717]"

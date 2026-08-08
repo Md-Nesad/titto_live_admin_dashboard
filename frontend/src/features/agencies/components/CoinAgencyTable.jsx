@@ -1,8 +1,19 @@
 import { Eye, Funnel, SquarePen, Trash2 } from "lucide-react";
 import star from "../../../assets/image 343.svg";
 import { tableData } from "../../../data/data";
+import FilterAndAddAgency from "./FilterAndAddAgency";
+import useViewModal from "../../../shared/hooks/useViewModal";
+import AgencyDetailsModal from "../modals/AgencyDetailsModal";
+import { useNavigate } from "react-router-dom";
 
 export default function CoinAgencyTable() {
+  const navigate = useNavigate();
+  const {
+    open,
+    selectedItem: agency,
+    handleViewClick,
+    handleClose,
+  } = useViewModal();
   return (
     <div className="w-full mb-10">
       {/* search area */}
@@ -12,14 +23,7 @@ export default function CoinAgencyTable() {
           className="border border-[#BBBBBB] outline-[#BBBBBB] w-full px-4 py-1.5 rounded-md shrink"
           placeholder="Search by agency ID or name"
         />
-        <div className="flex items-center sm:gap-3 gap-2">
-          <button className="sm:px-5 px-2 py-2 rounded-md bg-[#FFFFFF] border border-[#FF9080] font-medium flex items-center max-sm:justify-center sm:gap-2 gap-4 text-sm sm:text-md text-[#FF9080] max-sm:w-full">
-            <Funnel size={18} className="text-[#FF9080]" /> Filter
-          </button>
-          <button className="sm:px-5 px-2 py-2 w-33 rounded-md bg-[#FF9080] text-white font-medium text-sm sm:text-md max-sm:w-full">
-            + Add Agency
-          </button>
-        </div>
+        <FilterAndAddAgency />
       </div>
       {/* Card Container */}
       <div className="bg-white rounded-md shadow-[0_2px_10px_rgba(0,0,0,0.06)] border-2 border-[#E5E7EB]">
@@ -70,11 +74,16 @@ export default function CoinAgencyTable() {
                   </td>
 
                   <td className="p-3 text-[#181717] text-sm font-medium cursor-pointer flex gap-3 items-center">
-                    <button title="View Agency">
+                    <button onClick={() => handleViewClick(row)}>
                       <Eye size={20} />
                     </button>
 
-                    <button title="Edit Agency">
+                    <button
+                      onClick={() =>
+                        navigate(`/dashboard/agencies/update-agency/${row.id}`)
+                      }
+                      title="Update Agency Details"
+                    >
                       <SquarePen size={20} />
                     </button>
 
@@ -86,6 +95,13 @@ export default function CoinAgencyTable() {
               ))}
             </tbody>
           </table>
+          {open && (
+            <AgencyDetailsModal
+              open={open}
+              onClose={handleClose}
+              agency={agency}
+            />
+          )}
         </div>
       </div>
     </div>

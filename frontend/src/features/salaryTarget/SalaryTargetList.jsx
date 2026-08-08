@@ -1,27 +1,28 @@
 import { useState } from "react";
-// import SalaryModal from "../modals/SalaryModal";
-// import { BASE_URL, formatNumber } from "../utility/utility";
 import { LoaderCircle, SquarePen, Trash2 } from "lucide-react";
-// import UpdateSalaryModal from "../modals/UpdateSalaryModal";
-// import useDelete from "../hooks/useDelete";
-// import { toast } from "react-toastify";
-// import { useGlobalConfirm } from "../context/ConfirmProvider";
+import useViewModal from "../../shared/hooks/useViewModal";
+import AddSalaryTarget from "./AddSalaryTarget";
+import UpdateSalaryTarget from "./UpdateSalaryTarget";
 
 export default function SalaryTargetList() {
-  //   const [open, setIsOpen] = useState(false);
-  //   const [edit, setEdit] = useState(false);
-  //   const [salaries, setSalaries] = useState(data);
-  //   const [selectedSalary, setSelectedSalary] = useState(null);
-  //   const { confirm } = useGlobalConfirm();
-  //   const [loading, setLoading] = useState(null);
-  //   const deleteUser = useDelete(`${BASE_URL}/admin/salary-targets`);
+  const { open, selectedItem, handleViewClick, handleClose } = useViewModal();
+  const [edit, setEdit] = useState(false);
+  // const [selected, setSelected] = useState(null);
+
+  const handleEditView = (salary) => {
+    setEdit(true);
+    // setSelected(salary);
+  };
 
   return (
     <>
       <div className="py-4 bg-[#FFFFFF] rounded-md shadow-[0_2px_10px_rgba(0,0,0,0.06)] w-full overflow-x-auto mt-7 mb-10 border border-border_primary">
         <div className="flex items-center justify-between mb-4 px-3 sm:px-5">
           <h2 className="text-xl font-semibold">Salary Targets</h2>
-          <button className="px-5 py-1.5 text-sm sm:text-[17px] bg-linear-to-r from-[#6DA5FF] to-[#F576D6] text-white rounded-md font-medium">
+          <button
+            onClick={handleViewClick}
+            className="px-5 py-1.5 text-sm sm:text-[17px] bg-secondary hover:bg-primary transition-colors duration-100 text-white rounded-md font-medium"
+          >
             Add Target
           </button>
         </div>
@@ -52,7 +53,7 @@ export default function SalaryTargetList() {
               <td className="p-3">fadfjahjdf</td>
               <td className="p-3">
                 <span className="flex items-center gap-4">
-                  <button title="Edit">
+                  <button onClick={handleEditView} title="Edit">
                     <SquarePen size={17} />
                   </button>
 
@@ -64,25 +65,14 @@ export default function SalaryTargetList() {
             </tr>
           </tbody>
         </table>
-        {/* {open && (
-          <SalaryModal
-            onClose={() => setIsOpen(false)}
-            onSuccess={() => {
-              setRefresh((prev) => !prev);
-              setIsOpen(false);
-            }}
+        {open && <AddSalaryTarget onClose={handleClose} />}
+
+        {edit && (
+          <UpdateSalaryTarget
+            onClose={() => setEdit(false)}
+            // selected={editSelectedItem}
           />
         )}
-        {edit && (
-          <UpdateSalaryModal
-            onClose={() => setEdit(false)}
-            selected={selectedSalary}
-            onSuccess={() => {
-              setRefresh((prev) => !prev);
-              setIsOpen(false);
-            }}
-          />
-        )} */}
       </div>
     </>
   );

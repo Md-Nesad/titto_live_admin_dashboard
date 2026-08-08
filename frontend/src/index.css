@@ -10,6 +10,12 @@
   h1 {
     @apply text-xl font-semibold;
   }
+  label {
+    @apply text-sm font-semibold text-[#181717] font-sans;
+  }
+  select {
+    @apply w-full border border-gray-300 text-[#686868A6] rounded-md px-3 py-2 text-sm focus:outline-none appearance-none cursor-pointer;
+  }
 }
 
 th {

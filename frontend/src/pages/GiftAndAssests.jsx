@@ -2,6 +2,7 @@ import React from "react";
 import TitleSubTitle from "../shared/components/TitleSubTitle";
 import GiftCategories from "../features/gitAndAssests/components/GiftCategories";
 import GiftListTable from "../features/gitAndAssests/components/GiftList";
+import GiftTabs from "../features/gitAndAssests/components/GiftTabs";
 
 export default function GiftAndAssests() {
   return (
@@ -18,7 +19,7 @@ export default function GiftAndAssests() {
         <GiftCategories />
       </section>
 
-      <GiftListTable />
+      <GiftTabs />
     </div>
   );
 }

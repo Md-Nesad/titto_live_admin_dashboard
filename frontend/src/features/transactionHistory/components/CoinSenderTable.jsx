@@ -1,7 +1,15 @@
-import { Funnel, Trash2 } from "lucide-react";
+import { Funnel, Trash2, Eye } from "lucide-react";
 import { tableData } from "../../../data/data";
+import useViewModal from "../../../shared/hooks/useViewModal";
+import TransactionDetailsModal from "../modals/TransactionDetails";
 
 export default function CoinSenderTable() {
+  const {
+    open,
+    selectedItem: transaction,
+    handleViewClick,
+    handleClose,
+  } = useViewModal();
   return (
     <div className="w-full mb-10">
       {/* search area */}
@@ -11,11 +19,11 @@ export default function CoinSenderTable() {
           className="border border-[#BBBBBB] outline-[#BBBBBB] w-full px-4 py-1.5 rounded-md shrink"
           placeholder="Search by agency ID or name"
         />
-        <div className="flex items-center sm:gap-3 gap-2">
+        {/* <div className="flex items-center sm:gap-3 gap-2">
           <button className="sm:px-5 px-2 py-2 rounded-md bg-[#FFFFFF] border border-[#FF9080] font-medium flex items-center max-sm:justify-center sm:gap-2 gap-4 text-sm sm:text-md text-[#FF9080] max-sm:w-full">
             <Funnel size={18} className="text-[#FF9080]" /> Filter
           </button>
-        </div>
+        </div> */}
       </div>
       {/* Card Container */}
       <div className="bg-white rounded-md shadow-[0_2px_10px_rgba(0,0,0,0.06)] border-2 border-[#E5E7EB]">
@@ -46,15 +54,31 @@ export default function CoinSenderTable() {
                   <td className="p-3">1,000M</td>
                   <td className="p-3 text-[#00D519]">$47.50</td>
                   <td className="p-3">2024-10-28</td>
-                  <td className="p-3 pl-7 flex text-primary">
+                  <td className="p-3 pl-4.5 flex gap-x-3 ">
+                    <button
+                      onClick={() => handleViewClick(row)}
+                      title="View Details"
+                    >
+                      <Eye size={18} className="cursor-pointer" />
+                    </button>
                     <button title="Delete Transaction">
-                      <Trash2 size={18} className="cursor-pointer" />
+                      <Trash2
+                        size={18}
+                        className="cursor-pointer text-primary"
+                      />
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          {open && (
+            <TransactionDetailsModal
+              open={open}
+              onClose={handleClose}
+              transaction={transaction}
+            />
+          )}
         </div>
       </div>
     </div>
