@@ -21,7 +21,6 @@ const giftSchema = new mongoose.Schema({
 
   giftImage: {
     type: String,
-    required: true,
   },
 });
 

@@ -13,13 +13,13 @@ const createGift = async (payload, giftImage) => {
   }
 
   //upload giftImage to cloudinary
-  const uploadedImage = await uploadSingleImage(giftImage);
+  const giftImageResult = await uploadSingleImage(giftImage);
 
   const newGift = await Gift.create({
     giftName,
     giftPrice: Number(giftPrice),
     category,
-    giftImage: uploadedImage.secure_url,
+    giftImage: giftImageResult.secure_url,
   });
 
   return newGift;
@@ -65,19 +65,22 @@ const getSingleGift = async (id) => {
 const updateGift = async (id, payload, giftImage) => {
   const { giftName, giftPrice, category } = payload;
 
-  //upload giftImage to cloudinary
-  const uploadedImage = await uploadSingleImage(giftImage);
+  const updatedData = {
+    giftName,
+    giftPrice: Number(giftPrice),
+    category,
+  };
 
-  const updatedGift = await Gift.findByIdAndUpdate(
-    id,
-    {
-      giftName,
-      giftPrice: Number(giftPrice),
-      category,
-      giftImage: uploadedImage.secure_url,
-    },
-    { new: true },
-  );
+  //upload giftImage to cloudinary
+  if (giftImage) {
+    const giftImageResult = await uploadSingleImage(giftImage);
+    updatedData.giftImage = giftImageResult.secure_url;
+  }
+
+  const updatedGift = await Gift.findByIdAndUpdate(id, updatedData, {
+    new: true,
+    runValidators: true,
+  });
 };
 
 const deleteGift = async (id) => {

@@ -124,13 +124,18 @@ const loginUser = async (payload) => {
     throw new Error("Email and password are required.");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
     throw new Error("User not found.");
   }
 
+  console.log("password:", password);
+  console.log("user password:", user?.password);
+
   const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  console.log("isPasswordValid", isPasswordValid);
 
   if (!isPasswordValid) {
     throw new Error("Invalid password.");

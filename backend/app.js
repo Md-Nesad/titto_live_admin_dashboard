@@ -13,6 +13,9 @@ const countryRoutes = require("./routes/countryRoutes");
 const salaryRoutes = require("./routes/salaryRoutes");
 const giftRoutes = require("./routes/giftRoute");
 const userRoutes = require("./routes/userRoutes");
+const agencyRoutes = require("./routes/agencyRoutes");
+const exchangeRateRoutes = require("./routes/exchangeChangeRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
 
 const app = express();
 
@@ -20,8 +23,9 @@ app.use(express.json());
 app.use(helmet());
 app.use(cors(corsOptions));
 
-app.get("/", authMiddleware, adminMiddleware, (req, res) => {
-  res.send("Hello my first backend application");
+//test route
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 });
 
 //auth routes
@@ -49,6 +53,15 @@ app.use("/api/v1/gift", giftRoutes);
 
 // user routes
 app.use("/api/v1/users", userRoutes);
+
+// agency routes
+app.use("/api/v1/agency", agencyRoutes);
+
+//exchange Rate routes
+app.use("/api/v1/transactions", transactionRoutes);
+
+//transaction routes
+app.use("/api/v1/coins", transactionRoutes);
 
 //not found middleware
 app.use(notFoundMiddleware);
