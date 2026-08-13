@@ -11,6 +11,8 @@ const emailWorker = new Worker(
     if (job.name === "send_verification_email") {
       const { email, otp } = job.data;
 
+      console.log("email and otp", email, otp);
+
       await sendOtp(email, otp);
 
       console.log("send top");

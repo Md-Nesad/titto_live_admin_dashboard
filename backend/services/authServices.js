@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel.js");
-const generateOTP = require("../utils/generateOTP.js");
+const generateOTP = require("../utils/generateOtp.js");
 const generateUniqueUserId = require("../utils/generateIdNumber.js");
 const client = require("../config/redis.js");
 const sendOtp = require("../utils/otpSendToMail.js");
