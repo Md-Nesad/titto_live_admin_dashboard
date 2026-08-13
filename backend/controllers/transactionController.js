@@ -1,25 +1,5 @@
 const transactionService = require("../services/transactionService");
 
-const sellCoinsToAgency = async (req, res) => {
-  try {
-    const transa = await transactionService.sellCoinsToAgency(
-      req.body,
-      req.user.id,
-    );
-
-    res.status(200).json({
-      success: true,
-      data: transa,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
 const rateTransaction = async (req, res) => {
   try {
     const transactions = await transactionService.rateTransaction();
@@ -54,8 +34,28 @@ const transactionHistory = async (req, res) => {
   }
 };
 
+const getMonthlyRevenue = async (req, res) => {
+  try {
+    const data = await transactionService.getMonthlyRevenue();
+
+    res.status(200).json({
+      success: true,
+      message: "Monthly revenue retrieved successfully",
+      data,
+    });
+  } catch (error) {
+    console.error("Get monthly revenue error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve monthly revenue",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
-  sellCoinsToAgency,
   rateTransaction,
   transactionHistory,
+  getMonthlyRevenue,
 };

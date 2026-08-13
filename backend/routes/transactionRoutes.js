@@ -4,8 +4,6 @@ const authMiddleware = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-router.post("/sell", authMiddleware, transactionController.sellCoinsToAgency);
-
 router.get("/rate", authMiddleware, transactionController.rateTransaction);
 
 router.get(
@@ -13,5 +11,7 @@ router.get(
   authMiddleware,
   transactionController.transactionHistory,
 );
+
+router.get("/revenue", transactionController.getMonthlyRevenue);
 
 module.exports = router;

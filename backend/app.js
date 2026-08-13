@@ -14,7 +14,7 @@ const salaryRoutes = require("./routes/salaryRoutes");
 const giftRoutes = require("./routes/giftRoute");
 const userRoutes = require("./routes/userRoutes");
 const agencyRoutes = require("./routes/agencyRoutes");
-const exchangeRateRoutes = require("./routes/exchangeChangeRoutes");
+const coinManagement = require("./routes/coinManagement");
 const transactionRoutes = require("./routes/transactionRoutes");
 
 const app = express();
@@ -61,7 +61,7 @@ app.use("/api/v1/agency", agencyRoutes);
 app.use("/api/v1/transactions", transactionRoutes);
 
 //transaction routes
-app.use("/api/v1/coins", transactionRoutes);
+app.use("/api/v1/coins", coinManagement);
 
 //not found middleware
 app.use(notFoundMiddleware);

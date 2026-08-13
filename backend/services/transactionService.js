@@ -1,45 +1,8 @@
 const Agency = require("../models/agencyModel");
 const Transaction = require("../models/transaction");
+const { getLast12MonthsRange } = require("../utils/date");
 const generateTransactionId = require("../utils/generateTransactionId");
-
-const sellCoinsToAgency = async (payload, sender) => {
-  const { agencyId, coins, price, category } = payload;
-
-  const agency = await Agency.findOne({ agencyId });
-
-  console.log("agency_details", agency);
-
-  if (!agency) {
-    throw new Error("Agency not found!");
-  }
-
-  if (agency.type !== category) {
-    throw new Error("Invalid category!");
-  }
-
-  // Add new coins with previously purchased coins
-  agency.coinBuy = (agency.coinBuy || 0) + coins;
-
-  // Beans will be double of total purchased coins
-  agency.beans = agency.coinBuy * 2;
-
-  await agency.save();
-
-  const transactionId = generateTransactionId();
-
-  const newTransaction = {
-    transactionId,
-    sender,
-    receiver: agency._id,
-    category,
-    coins,
-    price,
-  };
-
-  const transaction = await Transaction.create(newTransaction);
-
-  return transaction;
-};
+const { formatMonthlyRevenue } = require("../utils/revenueHelper");
 
 const rateTransaction = async () => {
   const transactions = await Agency.find(
@@ -78,8 +41,54 @@ const transactionHistory = async () => {
   return transactions;
 };
 
+const getMonthlyRevenue = async () => {
+  const { startDate, endDate } = getLast12MonthsRange();
+
+  const result = await Transaction.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: startDate,
+          $lte: endDate,
+        },
+
+        category: {
+          $in: ["host", "master", "coin"],
+        },
+      },
+    },
+
+    {
+      $group: {
+        _id: {
+          year: {
+            $year: "$createdAt",
+          },
+
+          month: {
+            $month: "$createdAt",
+          },
+        },
+
+        revenue: {
+          $sum: "$price",
+        },
+      },
+    },
+
+    {
+      $sort: {
+        "_id.year": 1,
+        "_id.month": 1,
+      },
+    },
+  ]);
+
+  return formatMonthlyRevenue(result);
+};
+
 module.exports = {
-  sellCoinsToAgency,
   rateTransaction,
   transactionHistory,
+  getMonthlyRevenue,
 };
