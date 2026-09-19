@@ -12,7 +12,7 @@ const updateExchangeRate = async (payload) => {
   return updatedRate;
 };
 
-const getExchangeRate = async (payload) => {
+const getExchangeRate = async () => {
   const exchangeRate = await Rate.findOne();
 
   if (!exchangeRate) throw new Error("Exchange rate not found");
@@ -22,6 +22,10 @@ const getExchangeRate = async (payload) => {
 
 const sellCoinsToAgency = async (payload, sender) => {
   const { agencyId, coins, price, category } = payload;
+
+  if (!agencyId) {
+    throw new Error("Agency id is required");
+  }
 
   const agency = await Agency.findOne({ agencyId });
 

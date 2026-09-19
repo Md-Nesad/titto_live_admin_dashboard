@@ -17,6 +17,12 @@ const createCountry = async (payload) => {
     throw new Error("Name is required.");
   }
 
+  const exitingCountry = await Country.findOne({ name });
+
+  if (exitingCountry) {
+    throw new Error("Country already exists.");
+  }
+
   const country = await Country.create(payload);
 
   return country;

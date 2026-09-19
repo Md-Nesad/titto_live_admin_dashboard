@@ -4,7 +4,7 @@ const generateRandomId = require("../utils/generateIdNumber");
 
 const createSupportAgency = async (req, res, next) => {
   try {
-    const { name, gender, level, phone, location, status } = req.body;
+    const { name, gender, phone, location, status } = req.body;
 
     // generate random agency id
     const agencyId = generateRandomId();

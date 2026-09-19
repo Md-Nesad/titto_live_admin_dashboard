@@ -1,34 +1,60 @@
-const nodemailer = require("nodemailer");
+const transporter = require("../config/nodemailer");
 
 const sendOtp = async (email, otp) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
-
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+  const mailOptions = {
+    from: `"Titto Live" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: "Email Verification OTP",
+
+    subject: "Your Titto Live verification code",
+
+    text: `
+      Your Titto Live verification code is: ${otp}
+
+      This code will expire in 5 minutes.
+
+      If you did not request this code, please ignore this email.
+    `.trim(),
+
     html: `
-            <div style="font-family:Arial">
-                <h2>Email Verification</h2>
+      <div style="
+        font-family: Arial, sans-serif;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 30px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+      ">
 
-                <p>Your verification code is</p>
+        <h2>Titto Live</h2>
 
-                <h1>${otp}</h1>
+        <p>Your verification code is:</p>
 
-                <p>This OTP will expire in 5 minutes.</p>
-            </div>
-        `,
-  });
+        <div style="
+          font-size: 32px;
+          font-weight: bold;
+          letter-spacing: 8px;
+          padding: 15px 0;
+        ">
+          ${otp}
+        </div>
+
+        <p>
+          This code will expire in <strong>5 minutes</strong>.
+        </p>
+
+        <p style="color: #6b7280;">
+          If you did not request this code, please ignore this email.
+        </p>
+
+        <p>
+          Thanks,<br />
+          Titto Live Team
+        </p>
+
+      </div>
+    `,
+  };
+  await transporter.sendMail(mailOptions);
 };
 
 module.exports = sendOtp;

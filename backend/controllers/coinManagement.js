@@ -6,7 +6,7 @@ const updatedExchangeRate = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Exchange Rate updated",
+      message: "Exchange Rate updated successfully",
     });
   } catch (error) {
     console.error(error);
@@ -36,6 +36,7 @@ const getExchangeRate = async (req, res) => {
 
 const sellCoinsToAgency = async (req, res) => {
   try {
+    console.log(req.user.id);
     const transaction = await coinManagement.sellCoinsToAgency(
       req.body,
       req.user.id,

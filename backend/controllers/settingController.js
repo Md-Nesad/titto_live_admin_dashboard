@@ -3,7 +3,7 @@ const { successHandler, rejectHandler } = require("../utils/responseHandler");
 
 const createSetting = async (req, res, next) => {
   try {
-    const result = await settingService.saveSetting(req.body);
+    await settingService.saveSetting(req.body);
 
     successHandler(res, 201, "Settings created successfully.");
   } catch (error) {

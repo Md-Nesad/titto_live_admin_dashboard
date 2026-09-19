@@ -1,9 +1,6 @@
 const Agency = require("../models/agencyModel");
 const uploadSingleImage = require("../utils/uploadImageToCloudinary");
-const {
-  agencyBodySchema,
-  fileValidationSchema,
-} = require("../validationSchema/agencySchema");
+const { agencyBodySchema } = require("../validationSchema/agencySchema");
 
 const createAgency = async ({ body, files }) => {
   const validatedData = await agencyBodySchema.parse(body);

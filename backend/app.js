@@ -25,31 +25,26 @@ app.use(cors(corsOptions));
 
 //test route
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("App is running....");
 });
 
 //auth routes
 app.use("/api/v1/auth", authRoutes);
 
 //setting routes
-app.use("/api/v1/setting", authMiddleware, adminMiddleware, settingRoutes);
+app.use("/api/v1/settings", settingRoutes);
 
 // support agencies routes
-app.use(
-  "/api/v1/support-agency",
-  authMiddleware,
-  adminMiddleware,
-  supportAgencyRoutes,
-);
+app.use("/api/v1/support-agency", supportAgencyRoutes);
 
 // country routes
-app.use("/api/v1/country", authMiddleware, adminMiddleware, countryRoutes);
+app.use("/api/v1/country", countryRoutes);
 
 // salary routes
-app.use("/api/v1/salary", salaryRoutes);
+app.use("/api/v1/salaries", salaryRoutes);
 
 // gift routes
-app.use("/api/v1/gift", giftRoutes);
+app.use("/api/v1/gifts", giftRoutes);
 
 // user routes
 app.use("/api/v1/users", userRoutes);
@@ -57,10 +52,10 @@ app.use("/api/v1/users", userRoutes);
 // agency routes
 app.use("/api/v1/agency", agencyRoutes);
 
-//exchange Rate routes
+//rate transaction, history and revenue
 app.use("/api/v1/transactions", transactionRoutes);
 
-//transaction routes
+//coin routes
 app.use("/api/v1/coins", coinManagement);
 
 //not found middleware
