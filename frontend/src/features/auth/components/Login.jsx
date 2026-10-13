@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { loginAdmin } from "../../../services/authServices";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -14,6 +15,28 @@ export default function AdminLogin() {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const {
+    mutate,
+    isPending: loading,
+    error,
+  } = useMutation({
+    mutationFn: loginAdmin,
+    onSuccess: (data) => {
+      console.log("data from login", data);
+      localStorage.setItem("adminToken", data.token);
+      navigate("/dashboard");
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    mutate({
+      email: formData.username,
+      password: formData.password,
     });
   };
 
@@ -37,10 +60,12 @@ export default function AdminLogin() {
         </h2>
 
         {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
+          <p className="text-red-500 text-sm mb-4 text-center">
+            {error.response?.data?.message || error.message}
+          </p>
         )}
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium mb-1">Username</label>
             <input
@@ -67,7 +92,6 @@ export default function AdminLogin() {
 
           <button
             type="submit"
-            onClick={() => navigate("/dashboard")}
             disabled={loading}
             className="w-full bg-secondary text-white py-2 rounded-lg font-medium transition disabled:opacity-60"
           >

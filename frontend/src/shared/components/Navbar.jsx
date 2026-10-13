@@ -5,8 +5,19 @@ import Sidebar from "./Sidebar";
 
 export default function Navbar() {
   const [isToogleNav, setIsToogleNav] = useState(false);
-  const [isToekn, setIsToken] = useState("");
   const navigate = useNavigate();
+  const token = localStorage.getItem("adminToken");
+
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+
+    if (!confirmLogout) {
+      return;
+    }
+
+    localStorage.removeItem("adminToken");
+    navigate("/login");
+  };
 
   return (
     <>
@@ -43,16 +54,10 @@ export default function Navbar() {
             </p>
           </div>
         </div>
-        {isToekn ? (
+        {token ? (
           <>
             <button
-              onClick={() => {
-                const confirm = window.confirm("Are you sure to logout?");
-                if (!confirm) return;
-                localStorage.removeItem("admin_token");
-                setIsToken(false);
-                navigate("/login");
-              }}
+              onClick={handleLogout}
               className="flex items-center gap-2 text-[18px] font-medium text-secondary hover:text-[#da9b9c] transition-colors duration-300"
             >
               <LogOut size={18} />
