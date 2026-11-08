@@ -20,6 +20,7 @@ import AddSupportAgency from "../pages/AddSupportAgency";
 import AdminSetting from "../pages/AdminSetting";
 import OTPVerification from "../features/auth/components/OTPVerification";
 import ProtectAdminRoutes from "./ProtectAdminRoutes";
+import DashboardSkeleton from "../shared/components/loading/DashboardSkeleton";
 
 export default function AdminDashboardRoutes() {
   return (
@@ -30,6 +31,7 @@ export default function AdminDashboardRoutes() {
           <Route path="/login" element={<AdminLogin />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-otp" element={<OTPVerification />} />
+          <Route path="/loading" element={<DashboardSkeleton />} />
           {/* dashboard nested routes here */}
           <Route element={<ProtectAdminRoutes />}>
             <Route path="/dashboard" element={<AdminDashboardLayout />}>

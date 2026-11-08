@@ -1,7 +1,22 @@
 import { Save } from "lucide-react";
-import { useState } from "react";
+import useSettings from "../../hooks/useSettings";
+
 export default function SettingConfiguration() {
-  const [toggle, setToggle] = useState(true);
+  const {
+    formData,
+    isLoading,
+    isError,
+    isPending,
+    handleChange,
+    handleNestedChange,
+    handleSubmit,
+  } = useSettings();
+
+  if (isLoading) return <p>Loading settings...</p>;
+
+  if (isError) return <p>Failed to load settings.</p>;
+
+  if (!formData) return null;
 
   return (
     <div className="w-full min-h-screen mb-10">
@@ -15,7 +30,10 @@ export default function SettingConfiguration() {
             <input
               className="border rounded-md w-full px-3 py-2 text-sm outline-none mt-1"
               type="text"
-              defaultValue="TItoolive Live"
+              value={formData.platformConfig.tittoLive}
+              onChange={(e) =>
+                handleChange("platformConfig", "tittoLive", e.target.value)
+              }
             />
           </div>
 
@@ -24,7 +42,10 @@ export default function SettingConfiguration() {
             <input
               className="border rounded-md w-full px-3 py-2 text-sm outline-none mt-1"
               type="email"
-              defaultValue="support@streamkar.live"
+              value={formData.platformConfig.supportEmail}
+              onChange={(e) =>
+                handleChange("platformConfig", "supportEmail", e.target.value)
+              }
             />
           </div>
         </div>
@@ -44,7 +65,14 @@ export default function SettingConfiguration() {
             </div>
             <input
               type="number"
-              defaultValue={3}
+              value={formData.userSetting.liveStreamUnlockLevel}
+              onChange={(e) =>
+                handleChange(
+                  "userSetting",
+                  "liveStreamUnlockLevel",
+                  Number(e.target.value),
+                )
+              }
               className="px-3 py-1 border border-[#AAAAAA] rounded w-15 text-center pl-5"
             />
           </div>
@@ -62,7 +90,15 @@ export default function SettingConfiguration() {
             </label>
             <input
               type="number"
-              defaultValue={100000}
+              value={formData.currencySetting.diamondToBDT.diamonds}
+              onChange={(e) =>
+                handleNestedChange(
+                  "currencySetting",
+                  "diamondToBDT",
+                  "diamonds",
+                  Number(e.target.value),
+                )
+              }
               className="border rounded-md w-full px-3 py-2 mt-1"
             />
           </div>
@@ -72,36 +108,21 @@ export default function SettingConfiguration() {
           <input
             className="border rounded-md px-3 py-2 w-full sm:mt-5"
             type="number"
-            defaultValue={900}
+            value={formData.currencySetting.diamondToBDT.BDT}
+            onChange={(e) =>
+              handleNestedChange(
+                "currencySetting",
+                "diamondToBDT",
+                "BDT",
+                Number(e.target.value),
+              )
+            }
           />
 
           <span className="text-sm font-medium sm:mt-5">BDT</span>
         </div>
 
-        {/* <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 max-sm:mt-5">
-          <div className="space-y-0.5 sm:space-y-1 w-full">
-            <label className="text-sm font-medium">
-              Bean to Diamond Conversion Rate
-            </label>
-            <input
-              type="number"
-              defaultValue={1000}
-              className="border rounded-md w-full px-3 py-2"
-            />
-          </div>
-
-          <span className="text-sm font-medium w-45 mt-0 sm:mt-5">Beans =</span>
-
-          <input
-            className="border rounded-md px-3 py-2 w-full mt-0.5 sm:mt-5"
-            type="number"
-            defaultValue={100}
-          />
-
-          <span className="text-sm font-medium mt-0 sm:mt-5">diamond</span>
-        </div> */}
-
-        {/* Lower User Settings */}
+        {/* Commission Settings */}
         <div className="pt-4">
           <h3 className="font-semibold text-lg">User Settings</h3>
 
@@ -117,7 +138,14 @@ export default function SettingConfiguration() {
             <div>
               <input
                 type="number"
-                defaultValue={3}
+                value={formData.commissionSetting.hostAgencyCommission}
+                onChange={(e) =>
+                  handleChange(
+                    "commissionSetting",
+                    "hostAgencyCommission",
+                    Number(e.target.value),
+                  )
+                }
                 className="py-1 border border-[#AAAAAA] rounded w-15 text-center pl-5"
               />
               <span className="pl-1">%</span>
@@ -136,8 +164,15 @@ export default function SettingConfiguration() {
             <div>
               <input
                 type="number"
-                defaultValue={10}
-                className=" py-1 border border-[#AAAAAA] rounded w-15 text-center pl-5.5"
+                value={formData.commissionSetting.masterCoinPortal}
+                onChange={(e) =>
+                  handleChange(
+                    "commissionSetting",
+                    "masterCoinPortal",
+                    Number(e.target.value),
+                  )
+                }
+                className="py-1 border border-[#AAAAAA] rounded w-15 text-center pl-5.5"
               />
               <span className="pl-1">%</span>
             </div>
@@ -153,7 +188,14 @@ export default function SettingConfiguration() {
             <div>
               <input
                 type="number"
-                defaultValue={10}
+                value={formData.commissionSetting.coinAgency}
+                onChange={(e) =>
+                  handleChange(
+                    "commissionSetting",
+                    "coinAgency",
+                    Number(e.target.value),
+                  )
+                }
                 className="py-1 border border-[#AAAAAA] rounded w-15 text-center pl-5.5"
               />
               <span className="pl-1">%</span>
@@ -170,8 +212,13 @@ export default function SettingConfiguration() {
               </p>
             </div>
             <div className="flex justify-end">
-              <button className="bg-secondary text-white px-5 py-1 rounded-md flex items-center gap-2 shadow-sm hover:bg-primary transition text-nowrap">
-                <Save size={18} /> Save All Settings
+              <button
+                onClick={handleSubmit}
+                disabled={isPending}
+                className="bg-secondary text-white px-5 py-1 rounded-md flex items-center gap-2 shadow-sm hover:bg-primary transition text-nowrap disabled:opacity-50"
+              >
+                <Save size={18} />
+                {isPending ? "Saving..." : "Save All Settings"}
               </button>
             </div>
           </div>

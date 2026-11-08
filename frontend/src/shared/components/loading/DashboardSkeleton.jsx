@@ -4,8 +4,8 @@ import TitleSubTitleSkeleton from "./TitleSubTitleSkeleton";
 
 export default function DashboardSkeleton() {
   return (
-    <div>
-      <TitleSubTitleSkeleton />
+    <div className="mt-17 ml-80">
+      {/* <TitleSubTitleSkeleton /> */}
 
       <StatsCardsSkeleton />
 

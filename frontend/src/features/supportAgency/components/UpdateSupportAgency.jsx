@@ -1,10 +1,53 @@
-import { ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import TitleSubTitle from "../../../shared/components/TitleSubTitle";
+import useSupport from "../../../hooks/useSupport";
+
+const getErrorMessage = (error) =>
+  error?.response?.data?.message || error?.message || "Something went wrong.";
 
 export default function UpdateSupportAgencyForm() {
   const { supportId } = useParams();
   const navigate = useNavigate();
+  const [formData, setFormData] = useState(null);
+  const { agenciesQuery, countriesQuery, updateMutation } = useSupport({
+    includeCountries: true,
+  });
+
+  const agency = agenciesQuery.data?.find((item) => item._id === supportId);
+  const countries = countriesQuery.data ?? [];
+  const inputClassName =
+    "mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm";
+
+  useEffect(() => {
+    if (agency) {
+      setFormData({
+        name: agency.name ?? "",
+        gender: agency.gender ?? "",
+        phone: agency.phone ?? "",
+        location:
+          typeof agency.location === "object"
+            ? (agency.location?._id ?? "")
+            : (agency.location ?? ""),
+        status: agency.status ?? "active",
+      });
+    }
+  }, [agency]);
+
+  const handleChange = (event) => {
+    setFormData((current) => ({
+      ...current,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    updateMutation.mutate(
+      { id: supportId, payload: formData },
+      { onSuccess: () => navigate("/dashboard/support-agency") },
+    );
+  };
 
   return (
     <>
@@ -12,174 +55,148 @@ export default function UpdateSupportAgencyForm() {
         title="Update Support Agency"
         subtitle="Update Support Agency details and information"
       />
-      <div className="w-full flex justify-center shadow-[0_2px_10px_rgba(0,0,0,0.06)] mb-10">
-        <div className="w-full bg-white rounded-xl py-5 sm:py-8 px-3 sm:px-8 border border-gray-100">
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            {/* Agency Name */}
-            <div>
-              <label>Agency Name</label>
-              <input
-                type="text"
-                placeholder="StreamDoing Agency"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm"
-              />
-            </div>
+      {agenciesQuery.isPending || countriesQuery.isPending ? (
+        <p className="mb-10 text-sm text-gray-600">Loading support agency...</p>
+      ) : agenciesQuery.isError || countriesQuery.isError ? (
+        <div className="mb-10 text-sm text-red-600" role="alert">
+          {agenciesQuery.isError && (
+            <p>
+              Unable to load support agencies:{" "}
+              {getErrorMessage(agenciesQuery.error)}
+              <button
+                type="button"
+                onClick={() => agenciesQuery.refetch()}
+                className="ml-2 underline"
+              >
+                Retry
+              </button>
+            </p>
+          )}
+          {countriesQuery.isError && (
+            <p>
+              Unable to load locations: {getErrorMessage(countriesQuery.error)}
+              <button
+                type="button"
+                onClick={() => countriesQuery.refetch()}
+                className="ml-2 underline"
+              >
+                Retry
+              </button>
+            </p>
+          )}
+        </div>
+      ) : !agency || !formData ? (
+        <p className="mb-10 text-sm text-gray-600">Support agency not found.</p>
+      ) : (
+        <div className="mb-10 flex w-full justify-center shadow-[0_2px_10px_rgba(0,0,0,0.06)]">
+          <div className="w-full rounded-xl border border-gray-100 bg-white px-3 py-5 sm:px-8 sm:py-8">
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
+                <label className="text-sm">
+                  Agency Name
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    minLength={2}
+                    required
+                    className={inputClassName}
+                  />
+                </label>
 
-            {/* Email */}
-            <div>
-              <label>E-mail</label>
-              <input
-                type="email"
-                placeholder="jon.doe@example.com"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm"
-              />
-            </div>
+                <label className="text-sm">
+                  Phone
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className={inputClassName}
+                  />
+                </label>
 
-            {/* phone */}
-            <div>
-              <label>Phone</label>
-              <input
-                type="text"
-                placeholder="+1 (737)-123-3265"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm"
-              />
-            </div>
+                <label className="text-sm font-medium">
+                  Gender
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    required
+                    className={inputClassName}
+                  >
+                    <option value="">Select gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </label>
 
-            {/* Gender */}
-            <div>
-              <label>Gender</label>
-              <div className="relative mt-1">
-                <select>
-                  <option value="">Select</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
+                <label className="text-sm">
+                  Location
+                  <select
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    required
+                    disabled={countries.length === 0}
+                    className={inputClassName}
+                  >
+                    <option value="">Select location</option>
+                    {countries.map((country) => (
+                      <option key={country._id} value={country._id}>
+                        {country.name}
+                      </option>
+                    ))}
+                  </select>
+                  {countries.length === 0 && (
+                    <span className="mt-1 block text-xs text-red-600">
+                      No locations are available.
+                    </span>
+                  )}
+                </label>
 
-                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <label className="text-sm">
+                  Status
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className={inputClassName}
+                  >
+                    <option value="active">Active</option>
+                    <option value="suspended">Suspended</option>
+                  </select>
+                </label>
               </div>
-            </div>
-            {/* password */}
-            <div>
-              <label>Passwords</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Enter password"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm"
-                />
+
+              {updateMutation.isError && (
+                <p role="alert" className="mt-4 text-sm text-red-600">
+                  Unable to update support agency:{" "}
+                  {getErrorMessage(updateMutation.error)}
+                </p>
+              )}
+
+              <div className="mt-8 flex justify-center gap-4 sm:justify-end">
+                <button
+                  type="button"
+                  onClick={() => navigate("/dashboard/support-agency")}
+                  className="rounded-md border border-gray-300 px-8 py-1 text-[#181717]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={updateMutation.isPending || countries.length === 0}
+                  className="rounded-md bg-secondary px-10 py-1 text-sm font-medium text-white transition-colors duration-100 hover:bg-primary disabled:opacity-60"
+                >
+                  {updateMutation.isPending ? "Saving..." : "Save Changes"}
+                </button>
               </div>
-            </div>
-
-            {/* Locaton */}
-            <div>
-              <label>Location</label>
-              <div className="relative">
-                <select className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm appearance-none">
-                  <option value="">Select</option>
-                  <option value="Dhaka">Dhaka</option>
-                  <option value="Chittagong">Chittagong</option>
-                  <option value="Khulna">Khulna</option>
-                  <option value="Rajshahi">Rajshahi</option>
-                </select>
-
-                <ChevronDown className="absolute right-3 top-3 text-gray-400 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* NID Number */}
-            <div>
-              <label>NID Number</label>
-              <input
-                type="text"
-                placeholder="NID12345678"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm"
-              />
-            </div>
-
-            {/* NID Front */}
-            <div>
-              <label>NID Front</label>
-              <div className="relative w-full cursor-pointer">
-                <input
-                  type="file"
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                />
-
-                <div className="border border-gray-300 rounded-md px-3 text-sm flex items-center gap-3">
-                  <span className="text-[#686868A6] font-medium py-2">
-                    Choose File
-                  </span>
-                  <span className="w-px h-7 bg-gray-300"></span>
-                  <span className="text-[#686868A6] font-medium truncate">
-                    No file choosen
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* NID Back */}
-            <div>
-              <label>NID Back</label>
-              <div className="relative w-full cursor-pointer">
-                <input
-                  type="file"
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                />
-
-                <div className="border border-gray-300 rounded-md px-3 text-sm flex items-center gap-3">
-                  <span className="text-[#686868A6] font-medium py-2">
-                    Choose File
-                  </span>
-                  <span className="w-px h-7 bg-gray-300"></span>
-                  <span className="text-[#686868A6] font-medium">
-                    No file choosen
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Profile Pic */}
-            <div>
-              <label>Profile Pic</label>
-              <div className="relative w-full cursor-pointer">
-                <input
-                  type="file"
-                  className="absolute inset-0 opacity-0 cursor-pointer"
-                />
-
-                <div className="border border-gray-300 rounded-md px-3 text-sm flex items-center gap-3">
-                  <span className="text-[#686868A6] font-medium py-2">
-                    Choose File
-                  </span>
-                  <span className="w-px h-7 bg-gray-300"></span>
-                  <span className="text-[#686868A6] font-medium">
-                    No file choosen
-                  </span>
-                </div>
-              </div>
-            </div>
-          </form>
-
-          {/* Buttons */}
-          <div className="flex justify-center sm:justify-end mt-8 gap-4">
-            <button
-              type="button"
-              onClick={() => navigate("/dashboard/support-agency")}
-              className="px-8 py-1 border border-gray-300 rounded-md text-[#181717]"
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              className="px-10 py-1 rounded-md text-white text-sm font-medium 
-            bg-secondary hover:bg-primary transition-colors duration-100"
-            >
-              Submit
-            </button>
+            </form>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

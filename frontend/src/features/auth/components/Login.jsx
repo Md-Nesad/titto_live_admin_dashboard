@@ -43,21 +43,39 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <img
-            src="/logo.png"
-            alt="Logo"
-            className="w-12 h-12 rounded-full lg:block hidden"
-            loading="lazy"
-          />
-          <h1 className="text-xl font-semibold bg-linear-to-r from-primary to-secondary text-transparent bg-clip-text">
-            StreamDoing
-          </h1>
+        <div className="flex items-center justify-center gap-6 mb-6 group">
+          {/* Logo */}
+          <div className="relative flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-[#ff9080]/20 blur-md group-hover:bg-[#ff9080]/30 transition-all" />
+
+            <img
+              src="/logo.png"
+              alt="Titto Live Logo"
+              className="relative w-11 h-11 rounded-full object-cover ring-2 ring-[#ff9080]/40 p-0.5 transition-transform duration-300 group-hover:scale-110"
+              loading="lazy"
+            />
+          </div>
+
+          {/* Brand Name */}
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-extrabold tracking-[0.12em] leading-none bg-gradient-to-r from-[#ff9080] via-[#ff6b6b] to-[#ffb199] bg-clip-text text-transparent">
+              TITTO <span className="text-white">LIVE</span>
+            </h1>
+
+            <span className="text-[9px] font-medium tracking-[0.35em] text-gray-400 mt-1">
+              CONNECT • SHARE • LIVE
+            </span>
+          </div>
         </div>
 
-        <h2 className="text-2xl font-semibold text-center mb-6 opacity-70">
-          Admin Login
-        </h2>
+        <div className="text-center mb-7">
+          <h2 className="text-2xl font-bold tracking-tight text-gray-800">
+            Welcome <span className="text-[#ff9080]">Back!</span>
+          </h2>
+          <p className="text-sm text-gray-400 mt-2 tracking-wide">
+            Sign in to your admin dashboard
+          </p>
+        </div>
 
         {error && (
           <p className="text-red-500 text-sm mb-4 text-center">

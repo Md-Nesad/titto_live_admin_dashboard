@@ -28,19 +28,19 @@ app.get("/", (req, res) => {
   res.send("App is running....");
 });
 
-//auth routes
+//auth routes implemented
 app.use("/api/v1/auth", authRoutes);
 
-//setting routes
+//setting routes implemented
 app.use("/api/v1/settings", settingRoutes);
 
-// support agencies routes
+// support agencies implemented
 app.use("/api/v1/support-agency", supportAgencyRoutes);
 
 // country routes
 app.use("/api/v1/country", countryRoutes);
 
-// salary routes
+// salary routes ongoing
 app.use("/api/v1/salaries", salaryRoutes);
 
 // gift routes

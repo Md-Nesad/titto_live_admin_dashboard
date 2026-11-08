@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const settingSchema = new mongoose.Schema({
   platformConfig: {
-    streamDoingLive: {
+    tittoLive: {
       type: String,
       required: true,
     },
@@ -18,66 +18,34 @@ const settingSchema = new mongoose.Schema({
       type: Number,
       required: true,
     },
-
-    newUserRegistration: {
-      type: Boolean,
-      required: true,
-    },
   },
 
   currencySetting: {
-    diamondToDollar: {
+    diamondToBDT: {
       diamonds: {
         type: Number,
         required: true,
       },
-      dollars: {
+      BDT: {
         type: Number,
         required: true,
       },
-    },
-    beanToDiamond: {
-      beans: {
-        type: Number,
-        required: true,
-      },
-
-      diamonds: {
-        type: Number,
-        required: true,
-      },
-    },
-  },
-
-  diamondShareSetting: {
-    requiredDiamonds: {
-      type: Number,
-      required: true,
-    },
-    amountOfShare: {
-      type: Number,
-      required: true,
     },
   },
 
   commissionSetting: {
-    adminAgencyCommission: {
-      type: Number,
-      required: true,
-    },
     hostAgencyCommission: {
       type: Number,
       required: true,
     },
-    masterAgencyCommission: {
+    masterCoinPortal: {
       type: Number,
       required: true,
     },
-  },
-
-  monthlyDiamondReset: {
-    type: Boolean,
-    required: true,
+    coinAgency: {
+      type: Number,
+      required: true,
+    },
   },
 });
 
