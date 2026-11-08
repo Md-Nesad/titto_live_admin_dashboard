@@ -8,7 +8,7 @@ export default function useSettings() {
   const [formData, setFormData] = useState(null);
 
   // Get Settings
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["settings"],
     queryFn: getSettings,
   });
@@ -46,7 +46,13 @@ export default function useSettings() {
   };
 
   // Update Settings
-  const { mutate, isPending } = useMutation({
+  const {
+    mutate,
+    isPending,
+    isError: isSaveError,
+    error: saveError,
+    reset: resetSave,
+  } = useMutation({
     mutationFn: updateSettings,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -57,6 +63,7 @@ export default function useSettings() {
 
   const handleSubmit = () => {
     if (!formData) return;
+    resetSave();
     mutate(formData);
   };
 
@@ -64,7 +71,11 @@ export default function useSettings() {
     formData,
     isLoading,
     isError,
+    error,
+    refetch,
     isPending,
+    isSaveError,
+    saveError,
     handleChange,
     handleNestedChange,
     handleSubmit,

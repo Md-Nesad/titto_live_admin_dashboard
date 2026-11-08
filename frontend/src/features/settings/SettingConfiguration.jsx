@@ -1,20 +1,55 @@
-import { Save } from "lucide-react";
+import { AlertCircle, RotateCw, Save } from "lucide-react";
 import useSettings from "../../hooks/useSettings";
+import SettingConfigurationSkeleton from "./SettingConfigurationSkeleton";
+
+const getErrorMessage = (error) => {
+  const message = error?.response?.data?.message || error?.message;
+
+  if (!message) return "An unexpected error occurred. Please try again.";
+  return typeof message === "string" ? message : JSON.stringify(message);
+};
 
 export default function SettingConfiguration() {
   const {
     formData,
     isLoading,
     isError,
+    error,
+    refetch,
     isPending,
+    isSaveError,
+    saveError,
     handleChange,
     handleNestedChange,
     handleSubmit,
   } = useSettings();
 
-  if (isLoading) return <p>Loading settings...</p>;
+  if (isLoading) return <SettingConfigurationSkeleton />;
 
-  if (isError) return <p>Failed to load settings.</p>;
+  if (isError) {
+    return (
+      <div
+        role="alert"
+        className="flex max-w-2xl items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800"
+      >
+        <AlertCircle size={22} className="mt-0.5 shrink-0 text-red-600" />
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold">Could not load settings</p>
+          <p className="mt-1 wrap-break-words text-sm">
+            {getErrorMessage(error)}
+          </p>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="mt-3 inline-flex items-center gap-2 rounded-md bg-red-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-800"
+          >
+            <RotateCw size={15} />
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!formData) return null;
 
@@ -211,7 +246,22 @@ export default function SettingConfiguration() {
                 Auto-reset host diamonds monthly
               </p>
             </div>
-            <div className="flex justify-end">
+            <div className="flex flex-col items-end gap-3">
+              {isSaveError && (
+                <div
+                  role="alert"
+                  className="flex max-w-xl items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+                >
+                  <AlertCircle
+                    size={18}
+                    className="mt-0.5 shrink-0 text-red-600"
+                  />
+                  <div className="min-w-0 wrap-break-words">
+                    <p className="font-semibold">Unable to save settings</p>
+                    <p className="mt-1">{getErrorMessage(saveError)}</p>
+                  </div>
+                </div>
+              )}
               <button
                 onClick={handleSubmit}
                 disabled={isPending}
