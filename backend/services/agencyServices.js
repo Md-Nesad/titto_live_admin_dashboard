@@ -56,7 +56,7 @@ const getAgencyById = async (id) => {
     select: "name",
   });
 
-  if (!singleAgency) {
+  if (!agency) {
     throw new Error("Agency not found!");
   }
 

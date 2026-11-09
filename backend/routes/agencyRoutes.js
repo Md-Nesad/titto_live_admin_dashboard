@@ -17,7 +17,15 @@ router.get("/", agencyController.getAllAgencies);
 
 router.get("/:agencyId", agencyController.getAgencyById);
 
-router.put("/:agencyId", agencyController.getByIdAndUpdate);
+router.put(
+  "/:agencyId",
+  upload.fields([
+    { name: "nidFront", maxCount: 1 },
+    { name: "nidBack", maxCount: 1 },
+    { name: "profilePic", maxCount: 1 },
+  ]),
+  agencyController.getByIdAndUpdate,
+);
 
 router.delete("/:agencyId", agencyController.getByIdAndDelete);
 

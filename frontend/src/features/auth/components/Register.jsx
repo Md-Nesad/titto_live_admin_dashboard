@@ -76,7 +76,7 @@ export default function AdminRegister() {
           />
 
           <h1 className="text-xl font-semibold bg-linear-to-r from-primary to-secondary text-transparent bg-clip-text">
-            StreamDoing
+            TITTO LIVE
           </h1>
         </div>
 

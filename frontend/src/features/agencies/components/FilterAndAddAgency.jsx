@@ -3,10 +3,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import FilterByStatusDropdown from "../../../shared/components/FilterByStatus";
 
-export default function FilterAndAddAgency() {
+export default function FilterAndAddAgency({
+  statusFilter,
+  setStatusFilter,
+}) {
   const navigate = useNavigate();
   const [openFilter, setOpenFilter] = useState(false);
-  const [statusFilter, setStatusFilter] = useState("all");
 
   return (
     <div className="flex items-center sm:gap-3 gap-2">

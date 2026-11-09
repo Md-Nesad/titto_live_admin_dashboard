@@ -1,33 +1,62 @@
-import { Funnel, Trash2, Eye } from "lucide-react";
-import { tableData } from "../../../data/data";
+import { Eye } from "lucide-react";
+import { useMemo, useState } from "react";
 import useViewModal from "../../../shared/hooks/useViewModal";
+import useDebounce from "../../../shared/hooks/useDebounce";
+import Skeleton from "../../../shared/components/loading/Skeleton";
 import TransactionDetailsModal from "../modals/TransactionDetails";
 
-export default function CoinSenderTable() {
+const getErrorMessage = (error) =>
+  error?.response?.data?.message || error?.message || "Something went wrong.";
+
+const getSenderId = (sender) => sender?.userId || sender?.agencyId || "—";
+const getSenderType = (sender) => sender?.role || sender?.type || "—";
+
+const formatDate = (date) =>
+  date && Number.isFinite(new Date(date).getTime())
+    ? new Date(date).toLocaleDateString()
+    : "—";
+
+export default function CoinSenderTable({ transactionHistoryQuery }) {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search.trim().toLowerCase());
   const {
     open,
     selectedItem: transaction,
     handleViewClick,
     handleClose,
   } = useViewModal();
+  const transactions = transactionHistoryQuery.data ?? [];
+  const filteredTransactions = useMemo(() => {
+    if (!debouncedSearch) return transactions;
+    return transactions.filter((item) =>
+      [
+        item.transactionId,
+        item.category,
+        item.sender?.userId,
+        item.sender?.agencyId,
+        item.sender?.role,
+        item.sender?.type,
+        item.receiver?.agencyId,
+        item.receiver?.type,
+      ].some((value) =>
+        String(value ?? "").toLowerCase().includes(debouncedSearch),
+      ),
+    );
+  }, [debouncedSearch, transactions]);
+
   return (
     <div className="w-full mb-10">
-      {/* search area */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-6 sm:gap-10 gap-3">
         <input
           type="text"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
           className="border border-[#BBBBBB] outline-[#BBBBBB] w-full px-4 py-1.5 rounded-md shrink"
-          placeholder="Search by agency ID or name"
+          placeholder="Search by transaction ID or agency"
         />
-        {/* <div className="flex items-center sm:gap-3 gap-2">
-          <button className="sm:px-5 px-2 py-2 rounded-md bg-[#FFFFFF] border border-[#FF9080] font-medium flex items-center max-sm:justify-center sm:gap-2 gap-4 text-sm sm:text-md text-[#FF9080] max-sm:w-full">
-            <Funnel size={18} className="text-[#FF9080]" /> Filter
-          </button>
-        </div> */}
       </div>
-      {/* Card Container */}
+
       <div className="bg-white rounded-md shadow-[0_2px_10px_rgba(0,0,0,0.06)] border-2 border-[#E5E7EB]">
-        {/* Table Wrapper for Horizontal Scroll */}
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse shrink text-nowrap">
             <thead>
@@ -41,35 +70,85 @@ export default function CoinSenderTable() {
                 <th className="p-3 pl-5">Action</th>
               </tr>
             </thead>
-
             <tbody>
-              {tableData.map((row, index) => (
-                <tr
-                  key={index}
-                  className="border-t border-[#DFDFDF] hover:bg-gray-50 text-md"
-                >
-                  <td className="p-3 font-medium pl-5">TNX012KAD</td>
-                  <td className="p-3">Office</td>
-                  <td className="p-3">002000</td>
-                  <td className="p-3">1,000M</td>
-                  <td className="p-3 text-[#00D519]">$47.50</td>
-                  <td className="p-3">2024-10-28</td>
-                  <td className="p-3 pl-4.5 flex gap-x-3 ">
+              {transactionHistoryQuery.isPending &&
+                Array.from({ length: 5 }, (_, index) => (
+                  <tr
+                    key={index}
+                    className="border-t border-[#DFDFDF]"
+                    aria-hidden="true"
+                  >
+                    {Array.from({ length: 7 }, (_, cellIndex) => (
+                      <td
+                        key={cellIndex}
+                        className={`p-3 ${cellIndex === 0 ? "pl-5" : ""}`}
+                      >
+                        <Skeleton className="h-5 w-20" />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              {transactionHistoryQuery.isError && (
+                <tr>
+                  <td colSpan="7" className="p-5 text-center text-red-600">
+                    Unable to load transaction history:{" "}
+                    {getErrorMessage(transactionHistoryQuery.error)}{" "}
                     <button
-                      onClick={() => handleViewClick(row)}
-                      title="View Details"
+                      type="button"
+                      onClick={() => transactionHistoryQuery.refetch()}
+                      disabled={transactionHistoryQuery.isFetching}
+                      className="underline disabled:opacity-60"
                     >
-                      <Eye size={18} className="cursor-pointer" />
-                    </button>
-                    <button title="Delete Transaction">
-                      <Trash2
-                        size={18}
-                        className="cursor-pointer text-primary"
-                      />
+                      {transactionHistoryQuery.isFetching
+                        ? "Retrying..."
+                        : "Retry"}
                     </button>
                   </td>
                 </tr>
-              ))}
+              )}
+              {!transactionHistoryQuery.isPending &&
+                !transactionHistoryQuery.isError &&
+                filteredTransactions.map((item) => (
+                  <tr
+                    key={item._id}
+                    className="border-t border-[#DFDFDF] hover:bg-gray-50 text-md"
+                  >
+                    <td className="p-3 font-medium pl-5">
+                      {item.transactionId}
+                    </td>
+                    <td className="p-3 capitalize">
+                      {getSenderType(item.sender)}
+                    </td>
+                    <td className="p-3">{getSenderId(item.sender)}</td>
+                    <td className="p-3 capitalize">
+                      {item.receiver?.type ?? "—"}
+                    </td>
+                    <td className="p-3">
+                      {Number(item.coins || 0).toLocaleString()}
+                    </td>
+                    <td className="p-3">{formatDate(item.createdAt)}</td>
+                    <td className="p-3 pl-4.5">
+                      <button
+                        type="button"
+                        onClick={() => handleViewClick(item)}
+                        title="View transaction details"
+                      >
+                        <Eye size={18} className="cursor-pointer" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              {!transactionHistoryQuery.isPending &&
+                !transactionHistoryQuery.isError &&
+                filteredTransactions.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="p-5 text-center text-gray-500">
+                      {transactions.length
+                        ? "No transactions match your search."
+                        : "No transactions found."}
+                    </td>
+                  </tr>
+                )}
             </tbody>
           </table>
           {open && (

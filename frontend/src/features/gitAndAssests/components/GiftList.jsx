@@ -6,6 +6,7 @@ import UpdateGiftModal from "../modals/UpdateGiftModal";
 import useGifts from "../../../hooks/useGifts";
 import giftCategories from "../giftCategories";
 import Skeleton from "../../../shared/components/loading/Skeleton";
+import useDebounce from "../../../shared/hooks/useDebounce";
 
 const getErrorMessage = (error) =>
   error?.response?.data?.message || error?.message || "Something went wrong.";
@@ -14,6 +15,7 @@ export default function GiftListTable({ giftsQuery }) {
   const [openFilter, setOpenFilter] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search.trim().toLowerCase());
   const [isOpen, setIsOpen] = useState(false);
   const {
     open: edit,
@@ -31,18 +33,17 @@ export default function GiftListTable({ giftsQuery }) {
   const gifts = giftsQuery.data ?? [];
 
   const filteredGifts = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
     return gifts.filter((gift) => {
       const matchesCategory =
         selectedCategory === "all" || gift.category === selectedCategory;
       const matchesSearch =
-        !normalizedSearch ||
+        !debouncedSearch ||
         [gift.giftName, gift.category].some((value) =>
-          value?.toLowerCase().includes(normalizedSearch),
+          value?.toLowerCase().includes(debouncedSearch),
         );
       return matchesCategory && matchesSearch;
     });
-  }, [gifts, search, selectedCategory]);
+  }, [debouncedSearch, gifts, selectedCategory]);
 
   const handleDelete = (gift) => {
     if (window.confirm(`Delete "${gift.giftName}"?`)) {
