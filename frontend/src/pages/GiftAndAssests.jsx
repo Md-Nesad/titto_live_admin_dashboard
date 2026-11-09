@@ -1,10 +1,12 @@
 import React from "react";
 import TitleSubTitle from "../shared/components/TitleSubTitle";
 import GiftCategories from "../features/gitAndAssests/components/GiftCategories";
-import GiftListTable from "../features/gitAndAssests/components/GiftList";
 import GiftTabs from "../features/gitAndAssests/components/GiftTabs";
+import useGifts from "../hooks/useGifts";
 
 export default function GiftAndAssests() {
+  const { statsQuery } = useGifts({ includeGifts: false });
+
   return (
     <div>
       <TitleSubTitle
@@ -16,7 +18,7 @@ export default function GiftAndAssests() {
         <h3 className="mt-5 mb-6 font-semibold text-[#181717] text-xl">
           Gift Categories
         </h3>
-        <GiftCategories />
+        <GiftCategories statsQuery={statsQuery} />
       </section>
 
       <GiftTabs />

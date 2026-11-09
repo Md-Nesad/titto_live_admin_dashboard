@@ -1,12 +1,58 @@
+import { useEffect, useState } from "react";
 import { Upload } from "lucide-react";
+import useGifts from "../../../hooks/useGifts";
+import giftCategories from "../giftCategories";
 
-export default function UpdateGiftModal({ open, onClose }) {
+const getErrorMessage = (error) =>
+  error?.response?.data?.message || error?.message || "Something went wrong.";
+
+export default function UpdateGiftModal({
+  open,
+  gift,
+  giftQuery,
+  onClose,
+}) {
+  const [formData, setFormData] = useState(null);
+  const { updateMutation } = useGifts({
+    includeGifts: false,
+    includeStats: false,
+  });
+
+  useEffect(() => {
+    if (gift) {
+      setFormData({
+        giftName: gift.giftName ?? "",
+        giftPrice: gift.giftPrice ?? "",
+        category: gift.category ?? "",
+        giftImage: null,
+      });
+    }
+  }, [gift]);
+
   if (!open) return null;
+
+  const handleChange = (event) => {
+    const { name, value, files } = event.target;
+    setFormData((current) => ({
+      ...current,
+      [name]: files ? files[0] : value,
+    }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    updateMutation.mutate(
+      { id: gift._id, payload: formData },
+      { onSuccess: onClose },
+    );
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-      <form className="w-full max-w-162.5 bg-white rounded-2xl shadow-lg p-4 sm:p-6 max-sm:h-[95vh] overflow-y-auto animatefadeIn hide_scrollbar max-sm:mx-3">
-        {/* Title */}
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-162.5 bg-white rounded-2xl shadow-lg p-4 sm:p-6 max-sm:h-[95vh] overflow-y-auto animatefadeIn hide_scrollbar max-sm:mx-3"
+      >
         <h2 className="text-[20px] font-semibold text-gray-800 mb-1">
           Update Gift
         </h2>
@@ -14,79 +60,131 @@ export default function UpdateGiftModal({ open, onClose }) {
           Update the details of an existing virtual gift
         </p>
 
-        {/* Gift Name */}
-        <div className="mb-3">
-          <label className="text-gray-700 text-[14px] font-medium">
-            Gift Name
-          </label>
-          <input
-            type="text"
-            placeholder="Enter Gift name"
-            className="w-full border rounded-lg px-3 py-2 text-[14px] mt-1 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          />
-        </div>
+        {giftQuery.isPending && (
+          <p className="text-sm text-gray-500">Loading gift details...</p>
+        )}
+        {giftQuery.isError && (
+          <p role="alert" className="mb-3 text-sm text-red-600">
+            Unable to load gift: {getErrorMessage(giftQuery.error)}{" "}
+            <button
+              type="button"
+              onClick={() => giftQuery.refetch()}
+              className="underline"
+            >
+              Retry
+            </button>
+          </p>
+        )}
 
-        {/* Category */}
-        <div className="flex flex-col sm:flex-row justify-between gap-2">
-          <div className="mt-1 w-full">
-            <label className="text-gray-700 text-[14px] font-medium">
-              Category
-            </label>
-            <div className="relative">
-              <select className="border border-[#626060] py-2">
-                <option value="">Select Category</option>
-
-                <option>Category 1</option>
-                <option>Category 1</option>
-                <option>Category 1</option>
-                <option>Category 1</option>
-              </select>
+        {formData && (
+          <>
+            <div className="mb-3">
+              <label
+                htmlFor="updateGiftName"
+                className="text-gray-700 text-[14px] font-medium"
+              >
+                Gift Name
+              </label>
+              <input
+                id="updateGiftName"
+                name="giftName"
+                type="text"
+                placeholder="Enter Gift name"
+                value={formData.giftName}
+                onChange={handleChange}
+                required
+                className="w-full border rounded-lg px-3 py-2 text-[14px] mt-1 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />
             </div>
-          </div>
-        </div>
 
-        {/* Price */}
-        <div className="mt-3">
-          <label className="text-gray-700 text-[14px] font-medium">
-            Price (Coins)
-          </label>
-          <input
-            type="number"
-            placeholder="Enter Price"
-            className="w-full border rounded-lg px-3 py-2 text-[14px] mt-1 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          />
-        </div>
-
-        {/* Upload Logo */}
-        <div className="mt-3">
-          <label className="text-gray-700 text-[14px] font-medium">
-            Upload Logo (SVG, PNG, Mp4)
-          </label>
-          <div className="relative w-full cursor-pointer mt-1">
-            <input
-              type="file"
-              className="absolute inset-0 opacity-0 cursor-pointer"
-            />
-
-            <div className="border border-gray-300 rounded-md px-3 text-sm flex items-center gap-3">
-              <span className="text-[#686868A6] font-medium py-2 flex items-center gap-2">
-                Upload <Upload size={15} />
-              </span>
-              <span className="w-px h-7 bg-gray-300"></span>
-              <span className="text-[#686868A6] font-medium truncate">
-                No file choosen
-              </span>
+            <div className="flex flex-col sm:flex-row justify-between gap-2">
+              <div className="mt-1 w-full">
+                <label
+                  htmlFor="updateGiftCategory"
+                  className="text-gray-700 text-[14px] font-medium"
+                >
+                  Category
+                </label>
+                <select
+                  id="updateGiftCategory"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 w-full rounded-lg border px-3 py-2 text-[14px]"
+                >
+                  <option value="">Select Category</option>
+                  {giftCategories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Upload Sound */}
+            <div className="mt-3">
+              <label
+                htmlFor="updateGiftPrice"
+                className="text-gray-700 text-[14px] font-medium"
+              >
+                Price (Coins)
+              </label>
+              <input
+                id="updateGiftPrice"
+                name="giftPrice"
+                type="number"
+                min="0"
+                step="any"
+                placeholder="Enter Price"
+                value={formData.giftPrice}
+                onChange={handleChange}
+                required
+                className="w-full border rounded-lg px-3 py-2 text-[14px] mt-1 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />
+            </div>
 
-        {/* Buttons */}
+            <div className="mt-3">
+              <label
+                htmlFor="updateGiftImage"
+                className="text-gray-700 text-[14px] font-medium"
+              >
+                Upload Logo (SVG, PNG, Mp4)
+              </label>
+              <div className="relative w-full cursor-pointer mt-1">
+                <input
+                  id="updateGiftImage"
+                  name="giftImage"
+                  type="file"
+                  accept="image/*,video/mp4"
+                  onChange={handleChange}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+
+                <div className="border border-gray-300 rounded-md px-3 text-sm flex items-center gap-3">
+                  <span className="text-[#686868A6] font-medium py-2 flex items-center gap-2">
+                    Upload <Upload size={15} />
+                  </span>
+                  <span className="w-px h-7 bg-gray-300"></span>
+                  <span className="text-[#686868A6] font-medium truncate">
+                    {formData.giftImage?.name ?? gift?.giftImage ?? "No file chosen"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {updateMutation.isError && (
+          <p role="alert" className="mt-3 text-sm text-red-600">
+            Unable to update gift: {getErrorMessage(updateMutation.error)}
+          </p>
+        )}
+
         <div className="flex justify-center sm:justify-end mt-8 gap-4">
           <button
             type="button"
-            onClick={() => onClose()}
+            onClick={onClose}
             className="px-8 py-1 border border-gray-300 rounded-md text-[#181717]"
           >
             Cancel
@@ -94,10 +192,10 @@ export default function UpdateGiftModal({ open, onClose }) {
 
           <button
             type="submit"
-            className="px-10 py-1 rounded-md text-white text-sm font-medium 
-            bg-secondary hover:bg-primary transition-colors"
+            disabled={!formData || giftQuery.isPending || updateMutation.isPending}
+            className="px-10 py-1 rounded-md text-white text-sm font-medium bg-secondary hover:bg-primary transition-colors disabled:opacity-60"
           >
-            Update
+            {updateMutation.isPending ? "Updating..." : "Update"}
           </button>
         </div>
       </form>

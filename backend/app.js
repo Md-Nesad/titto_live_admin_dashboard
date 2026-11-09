@@ -40,10 +40,10 @@ app.use("/api/v1/support-agency", supportAgencyRoutes);
 // country routes
 app.use("/api/v1/country", countryRoutes);
 
-// salary routes ongoing
+// salary routes implemented
 app.use("/api/v1/salaries", salaryRoutes);
 
-// gift routes
+// gift routes ongoing
 app.use("/api/v1/gifts", giftRoutes);
 
 // user routes

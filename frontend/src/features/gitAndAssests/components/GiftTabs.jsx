@@ -2,8 +2,11 @@ import React from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import GiftListTable from "./GiftList";
 import RecentGiftActivity from "./RecentGiftActivity";
+import useGifts from "../../../hooks/useGifts";
 
 export default function GiftTabs() {
+  const { giftsQuery } = useGifts({ includeStats: false });
+
   return (
     <div>
       <Tabs>
@@ -23,11 +26,11 @@ export default function GiftTabs() {
         </TabList>
 
         <TabPanel>
-          <GiftListTable />
+          <GiftListTable giftsQuery={giftsQuery} />
         </TabPanel>
 
         <TabPanel>
-          <RecentGiftActivity />
+          <RecentGiftActivity giftsQuery={giftsQuery} />
         </TabPanel>
       </Tabs>
     </div>
