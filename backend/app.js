@@ -43,7 +43,7 @@ app.use("/api/v1/country", countryRoutes);
 // salary routes implemented
 app.use("/api/v1/salaries", salaryRoutes);
 
-// gift routes ongoing
+// gift routes impmented
 app.use("/api/v1/gifts", giftRoutes);
 
 // user routes
