@@ -59,19 +59,19 @@ export default function AdminLogin() {
         <div className="flex items-center justify-center gap-6 mb-6 group">
           {/* Logo */}
           <div className="relative flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-[#ff9080]/20 blur-md group-hover:bg-[#ff9080]/30 transition-all" />
+            <div className="absolute inset-0 rounded-full bg-secondary/20 blur-md group-hover:bg-secondary/30 transition-all" />
 
             <img
               src="/logo.png"
               alt="Titto Live Logo"
-              className="relative w-11 h-11 rounded-full object-cover ring-2 ring-[#ff9080]/40 p-0.5 transition-transform duration-300 group-hover:scale-110"
+              className="relative w-11 h-11 rounded-full object-cover ring-2 ring-secondary/40 p-0.5 transition-transform duration-300 group-hover:scale-110"
               loading="lazy"
             />
           </div>
 
           {/* Brand Name */}
           <div className="flex flex-col">
-            <h1 className="text-2xl font-extrabold tracking-[0.12em] leading-none bg-gradient-to-r from-[#ff9080] via-[#ff6b6b] to-[#ffb199] bg-clip-text text-transparent">
+            <h1 className="text-2xl font-extrabold tracking-[0.12em] leading-none bg-linear-to-r from-secondary via-[#ff6b6b] to-[#ffb199] bg-clip-text text-transparent">
               TITTO <span className="text-white">LIVE</span>
             </h1>
 
@@ -83,7 +83,7 @@ export default function AdminLogin() {
 
         <div className="text-center mb-7">
           <h2 className="text-2xl font-bold tracking-tight text-gray-800">
-            Welcome <span className="text-[#ff9080]">Back!</span>
+            Welcome <span className="text-secondary">Back!</span>
           </h2>
           <p className="text-sm text-gray-400 mt-2 tracking-wide">
             Sign in to your admin dashboard
