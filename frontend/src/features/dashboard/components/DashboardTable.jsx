@@ -4,6 +4,8 @@ import FilterAndAddAgency from "../../agencies/components/FilterAndAddAgency";
 import AgencyDetailsModal from "../../agencies/modals/AgencyDetailsModal";
 import DashboardTableSkeleton from "../../../shared/components/loading/TableSkeleton";
 import useDebounce from "../../../shared/hooks/useDebounce";
+import capitalizeFirstLetter from "../../../shared/utils/capitalizeFirstLetter";
+import formatCompactNumber from "../../../shared/utils/formatCompactNumber";
 
 const getErrorMessage = (error) =>
   error?.response?.data?.message || error?.message || "Something went wrong.";
@@ -102,15 +104,21 @@ export default function DashboardTable({ agenciesQuery }) {
                     <td className="p-3 capitalize">{item.type}</td>
                     <td className="p-3">{item.level ?? 0}</td>
                     <td className="p-3">
-                      {Number(item.beans || 0).toLocaleString()}
+                      {formatCompactNumber(item.beans || 0)}
                     </td>
                     <td className="p-3">
-                      {Number(item.coinBuy || 0).toLocaleString()}
+                      {formatCompactNumber(item.coinBuy || 0)}
                     </td>
                     <td className="p-3">{getCountryName(item.country)}</td>
                     <td className="p-3">
-                      <span className="px-4 py-1 text-xs bg-linear-to-r from-[#79D49B] to-[#25C962] text-[#005D23] rounded-full font-semibold">
-                        {item.status}
+                      <span
+                        className={`px-4 py-1 text-xs rounded-full font-semibold ${
+                          item.status?.toLowerCase() === "pending"
+                            ? "bg-[#FEF3C7] text-[#92400E]"
+                            : "bg-linear-to-r from-[#79D49B] to-[#25C962] text-[#005D23]"
+                        }`}
+                      >
+                        {capitalizeFirstLetter(item.status)}
                       </span>
                     </td>
                     <td className="p-3 text-[#181717] text-sm font-medium">

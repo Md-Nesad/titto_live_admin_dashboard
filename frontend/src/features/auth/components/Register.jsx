@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRegisterAdmin } from "../../../shared/hooks/useAuth";
 
@@ -8,12 +8,24 @@ export default function AdminRegister() {
   const registerMutation = useRegisterAdmin();
 
   const [error, setError] = useState("");
+  const [showServerStartingMessage, setShowServerStartingMessage] =
+    useState(false);
 
   const [formData, setFormData] = useState({
     userName: "",
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (!registerMutation.isPending) return;
+
+    const timeoutId = setTimeout(() => {
+      setShowServerStartingMessage(true);
+    }, 1200);
+
+    return () => clearTimeout(timeoutId);
+  }, [registerMutation.isPending]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -36,6 +48,7 @@ export default function AdminRegister() {
     }
 
     setError("");
+    setShowServerStartingMessage(false);
 
     await registerMutation.mutate(
       {
@@ -86,6 +99,13 @@ export default function AdminRegister() {
 
         {error && (
           <p className="text-red-500 text-sm text-center mb-4">{error}</p>
+        )}
+
+        {registerMutation.isPending && showServerStartingMessage && (
+          <p className="text-gray-500 text-sm text-center mb-4" role="status">
+            The server is starting up. The first request after a while may take
+            a little longer on Render's free plan. Please wait.
+          </p>
         )}
 
         <form className="space-y-4" onSubmit={handleSubmit}>

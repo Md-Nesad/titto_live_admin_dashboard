@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { loginAdmin } from "../../../services/authServices";
@@ -10,13 +10,8 @@ export default function AdminLogin() {
     username: "",
     password: "",
   });
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  const [showServerStartingMessage, setShowServerStartingMessage] =
+    useState(false);
 
   const {
     mutate,
@@ -31,8 +26,26 @@ export default function AdminLogin() {
     },
   });
 
+  useEffect(() => {
+    if (!loading) return;
+
+    const timeoutId = setTimeout(() => {
+      setShowServerStartingMessage(true);
+    }, 1200);
+
+    return () => clearTimeout(timeoutId);
+  }, [loading]);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    setShowServerStartingMessage(false);
 
     mutate({
       email: formData.username,
@@ -80,6 +93,13 @@ export default function AdminLogin() {
         {error && (
           <p className="text-red-500 text-sm mb-4 text-center">
             {error.response?.data?.message || error.message}
+          </p>
+        )}
+
+        {loading && showServerStartingMessage && (
+          <p className="text-gray-500 text-sm mb-4 text-center" role="status">
+            The server is starting up. The first request after a while may take
+            a little longer on Render's free plan. Please wait.
           </p>
         )}
 
